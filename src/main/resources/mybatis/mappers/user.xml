@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="user">
+	<insert id="insert" parameterType="uservo"> <!-- 이타입의 객체를 여기다 매핑 미리 타입을 매핑해둠 configuration.xml에 -->
+		<![CDATA[
+			insert into user values(null, #{id}, #{name}, #{password}, now())
+		]]>
+
+		<selectKey keyProperty="no" resultType="long" order="AFTER"> <!-- 나온느값을 vo에다 세팅 밑에쿼리르 실행하고 이걸실행하기위해 order를 정해줌 -->
+			<!-- KEY PROPERTY는 밑에 쿼리 실행하고 저장할 속성명 리절트타입은 그 속성명의 타입 -->
+			<![CDATA[
+				select last_insert_id()
+			]]>
+		</selectKey>
+	</insert>
+
+	<select id="getByIdAndPassword" parameterType="map"
+		resultType="uservo">  <!-- 결과가 2개이상 나오면 에러 uservo에 2개를 담아주지만 -->
+		<![CDATA[
+			select no, id from user where id=#{id} and password=#{password} 
+		]]>
+	</select>
+
+	<select id="idCheck" parameterType="string" resultType="string">
+		<![CDATA[
+			select ID as id from user where ID = #{id};
+		]]>
+	</select>
+
+	<insert id="makeBlog" parameterType="map">
+		<![CDATA[
+			insert into blog values(#{userNo}, #{title}, #{logo})
+		]]>
+	</insert>
+
+	<select id="getId" parameterType="long" resultType="string">
+		<![CDATA[
+			select id from user where no = #{userNo}
+		]]>
+	</select>
+
+	<insert id="makeDefaultCategory" parameterType="map">
+		<![CDATA[
+			insert into category values(null, #{defaultCategoryName}, #{defaultCategoryDescription}, now(), #{userNo})
+		]]>
+	</insert>
+</mapper> 
