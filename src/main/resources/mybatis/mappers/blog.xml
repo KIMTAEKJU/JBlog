@@ -41,10 +41,21 @@
 		]]>
 	</select>
 
-	<select id="getPostList" parameterType="long"
+	<select id="getPostList" parameterType="map"
 		resultType="postvo">
 		<![CDATA[
-			select no, title, content as contents, reg_date as regDate, category_no as categoryNo from post where category_no = #{value} order by reg_date desc;		
+			select no, title, contents, regDate, categoryNo 
+				from (select no, title, content as contents, reg_date as regDate, category_no as categoryNo from post where category_no = #{categoryNo} and no > #{postNo} limit 0, #{firstQueryValue}) a 
+					order by regDate desc
+		]]>
+	</select>
+	
+	<select id="getPostListSecond" parameterType="map"
+		resultType="postvo">
+		<![CDATA[
+			select no, title, contents, regDate, categoryNo 
+			from (select no, title, content as contents, reg_date as regDate, category_no as categoryNo from post where CATEGORY_NO = #{categoryNo} and no <= #{postNo} order by reg_date desc limit 0, #{secondQueryValue}) a 
+			order by regDate desc
 		]]>
 	</select>
 
@@ -89,4 +100,11 @@
 			(select count(*) from post where category_no = #{categoryNo}) = 0
 		]]>
 	</delete>
+	
+	<select id="getMaxPostNo" parameterType="long" resultType="Long">
+		<![CDATA[
+			select max(a.no) from post a, category b where a.category_no = b.no and a.CATEGORY_NO = #{categoryNo} and b.user_no = #{userNo}		
+		]]>
+	</select>
+	
 </mapper>

@@ -47,6 +47,7 @@ public class BlogController
 					   @PathVariable Optional<Long> pathNo2) 
 	{
 		List<PostVo> postList = null;
+		long maxPostNo = 0;
 		
 		UserVo visitantUserVo = blogService.getUserNo(id);
 		visitantUserVo.setId(id);
@@ -58,23 +59,26 @@ public class BlogController
 		
 		if( pathNo1.isPresent()) // 카테고리를 눌러서 온거라면
 		{	
-			postList = blogService.getPostList(pathNo1.get());
-		}
-		else
-		{
-			postList = blogService.getPostList(1);
-			model.addAttribute("mainPost", postList.get(0) ); // 아니면 미분류 내용
-		}
-		
-		if( pathNo2.isPresent()) // 글까지 눌렀다면
-		{		
-			model.addAttribute("mainPost", blogService.getMainPost(pathNo2.get()) );
-		}
-		else
-		{
-			if( postList.size() != 0)
+			if( pathNo2.isPresent())
 			{
-				model.addAttribute("mainPost", postList.get(0));
+				postList = blogService.getPostList(pathNo1.get(), pathNo2.get(), visitantUserVo.getNo());
+				model.addAttribute("mainPost", blogService.getMainPost(pathNo2.get()));
+			}
+			else
+			{
+				postList = blogService.getPostList(pathNo1.get(), -1, visitantUserVo.getNo());
+				if( postList != null)
+				{
+					model.addAttribute("mainPost", postList.get(0) ); // 아니면 미분류 내용
+				}
+			}
+		}
+		else
+		{
+			postList = blogService.getPostList(1, -1, visitantUserVo.getNo());
+			if( postList != null)
+			{
+				model.addAttribute("mainPost", postList.get(0) ); // 아니면 미분류 내용
 			}
 		}
 		

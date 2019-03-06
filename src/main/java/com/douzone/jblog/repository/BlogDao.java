@@ -38,9 +38,19 @@ public class BlogDao
 		return sqlSession.selectList("blog.getCategoryName", userNo);
 	}
 	
-	public List<PostVo> getPostList(long categoryNo)
+	public List<PostVo> getPostList(Map<String, Object> map)
 	{
-		return sqlSession.selectList("blog.getPostList", categoryNo);
+		List<PostVo> list = sqlSession.selectList("blog.getPostList", map);
+		System.out.println("list : " + list);
+		
+		return list;
+	}
+	
+	public List<PostVo> getPostListSecond(Map<String, Object> map)
+	{
+		
+		List<PostVo> list = sqlSession.selectList("blog.getPostListSecond", map);
+		return list;
 	}
 	
 	public long setCategory(Map<String, Object> map)
@@ -68,6 +78,11 @@ public class BlogDao
 	public void categoryDelete(Map<String, Object> map)
 	{
 		sqlSession.delete("blog.categoryDelete", map);
+	}
+	
+	public Long getMaxPostNo(Map<String, Object> map)
+	{
+		return sqlSession.selectOne("blog.getMaxPostNo", map);
 	}
 	
 }
