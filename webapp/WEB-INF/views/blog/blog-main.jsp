@@ -18,7 +18,7 @@
 			<div id="content">
 				<div class="blog-content">
 					
-						<h4>${mainPost.title }</h4>
+						<h4>${mainPost.title }</h4> <!-- 포스트 제목 내용 보여줌 -->
 						<p>
 							${mainPost.contents }
 						</p>
@@ -26,11 +26,22 @@
 					
 				</div>
 				<ul class="blog-list">
-					<c:forEach items="${postList }" var="vo" varStatus="status">
+					<c:forEach items="${postList }" var="vo"> <!-- 포스트 리스트 -->
+						
 						<li>
-							<a href="${pageContext.request.contextPath}/${authuser.id}/${vo.categoryNo}/${vo.no}">${vo.title }</a> 
-							<span>${vo.regDate }</span>
+							<c:choose>
+								<c:when test="${vo.title == mainPost.title }">
+									<a href="${pageContext.request.contextPath}/${visitant.id}/${vo.categoryNo}/${vo.no}" style="color:red">${vo.title }</a> 
+									<span  style="color: red">${vo.regDate }</span>
+								</c:when>
+								
+								<c:otherwise>
+									<a href="${pageContext.request.contextPath}/${visitant.id}/${vo.categoryNo}/${vo.no}">${vo.title }</a> 
+									<span>${vo.regDate }</span>
+								</c:otherwise>
+							</c:choose>
 						</li>
+						
 					</c:forEach>
 
 				</ul>
@@ -44,10 +55,12 @@
 		</div>
 
 		<div id="navigation">
-			<h2>카테고리</h2>
+			<h2>카테고리</h2> <!-- 카테고리 리스트 -->
 			<ul>
 				<c:forEach items="${categoryNameList }" var="vo" varStatus="status">
-					<li><a href="${pageContext.request.contextPath}/${authuser.id}/${vo.no}">${vo.name }</a></li>
+					<li>
+						<a href="${pageContext.request.contextPath}/${visitant.id}/${vo.no}">${vo.name }</a>
+					</li>
 				</c:forEach>
 			</ul>
 		</div>

@@ -1,6 +1,8 @@
 package com.douzone.jblog.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
@@ -28,7 +30,7 @@ import com.douzone.jblog.vo.UserVo;
 import com.douzone.security.AuthUser;
 
 @Controller
-@RequestMapping("/{id:(?!assets).*}")
+@RequestMapping("/{id:(?!assets|uploads).*}")
 public class BlogController 
 {
 	@Autowired
@@ -46,19 +48,17 @@ public class BlogController
 	{
 		List<PostVo> postList = null;
 		
-		model.addAttribute("blogVo", blogService.getBlogTitleLogo(userVo.getNo()));
+		UserVo visitantUserVo = blogService.getUserNo(id);
+		visitantUserVo.setId(id);
 		
-		List<CategoryVo> categoryList = blogService.getCategoryName(userVo.getNo());
-		
+		List<CategoryVo> categoryList = blogService.getCategoryName(visitantUserVo.getNo());
+
+		model.addAttribute("blogVo", blogService.getBlogTitleLogo(visitantUserVo.getNo()));
 		model.addAttribute("categoryNameList", categoryList);
 		
 		if( pathNo1.isPresent()) // 카테고리를 눌러서 온거라면
 		{	
-			System.out.println("pathNo1 : " + pathNo1);
 			postList = blogService.getPostList(pathNo1.get());
-			
-			System.out.println("postList : " + postList);
-			System.out.println("postList size : " + postList.size());
 		}
 		else
 		{
@@ -67,25 +67,19 @@ public class BlogController
 		}
 		
 		if( pathNo2.isPresent()) // 글까지 눌렀다면
-		{	
-			System.out.println("pathNo2 : " + pathNo2);
-	
-			model.addAttribute("mainPost", postList.get( pathNo2.get().intValue() - 1) );
-
-			postList.remove(pathNo2.get().intValue() - 1);
-			
-			model.addAttribute("postList", postList);
+		{		
+			model.addAttribute("mainPost", blogService.getMainPost(pathNo2.get()) );
 		}
 		else
 		{
-			model.addAttribute("mainPost", postList.get(0) );
 			if( postList.size() != 0)
 			{
-				postList.remove(0);
+				model.addAttribute("mainPost", postList.get(0));
 			}
-			model.addAttribute("postList", postList);
 		}
 		
+		model.addAttribute("postList", postList);
+		model.addAttribute("visitant", visitantUserVo);
 		return "/blog/blog-main";
 	}
 
@@ -104,9 +98,7 @@ public class BlogController
 						@AuthUser UserVo userVo, Model model,
 						@ModelAttribute @Valid BlogVo blogVo, 
 						BindingResult result) 
-	{
-		System.out.println("여긴?");
-		
+	{		
 		String imgUrl = fileuploadService.restore(logo);
 
 		if (result.hasErrors()) {
@@ -121,7 +113,6 @@ public class BlogController
 		
 		if( imgUrl.equals("") == true) 
 		{
-			System.out.println("널 셋팅");
 			imgUrl = null;
 		}
 		
@@ -141,8 +132,10 @@ public class BlogController
 							 @AuthUser UserVo userVo) 
 	{
 		blogVo = blogService.getBlogTitleLogo(userVo.getNo());
+		List<CategoryVo> categoryList = blogService.getCategoryName(userVo.getNo());
 
 		model.addAttribute("blogVo", blogVo);
+		model.addAttribute("categoryList", categoryList);
 		return "/blog/blog-admin-write";
 	}
 
@@ -150,21 +143,22 @@ public class BlogController
 	public String adminWrite(Model model, 
 							@AuthUser UserVo userVo, 
 							@RequestParam("category") String categoryName,
-							@ModelAttribute @Valid BlogVo blogVo, 
+							@ModelAttribute @Valid BlogVo blogVo,
 							BindingResult result) 
 	{
 		if (result.hasErrors()) {
-			System.out.println("여기");
 			model.addAllAttributes(result.getModel());
 			blogVo = blogService.getBlogTitleLogo(userVo.getNo());
+			List<CategoryVo> categoryList = blogService.getCategoryName(userVo.getNo());
 
 			model.addAttribute("blogVo", blogVo);
+			model.addAttribute("categoryList", categoryList);
+			
 			return "/blog/blog-admin-write";
 		} 
 		else 
 		{
-			int results = blogService.postWrite(categoryName, blogVo);
-			System.out.println("results : " + results);
+			int results = blogService.postWrite(categoryName, blogVo, userVo.getNo());
 		}
 
 		return "redirect:/" + userVo.getId() + "/admin/write";
@@ -175,16 +169,47 @@ public class BlogController
 								Model model) 
 	{
 		BlogVo blogVo = blogService.getBlogTitleLogo(userVo.getNo());
+		List<CategoryVo> categoryList = blogService.getCategoryList(userVo.getNo());
 		
 		System.out.println("blogVo : " + blogVo);
 		model.addAttribute("blogVo", blogVo);
-		model.addAttribute("categoryList", blogService.getCategoryList(userVo.getNo()));
+		//model.addAttribute("categoryList", blogService.getCategoryList(userVo.getNo()));
+		
 		return "/blog/blog-admin-category";
 	}
 	
 	@ResponseBody
+	@RequestMapping(value = "/admin/category/ajax", method = RequestMethod.GET)
+	public JSONResult putshAjaxCategoryList(@AuthUser UserVo userVo)
+	{
+		System.out.println("여기오나요?");
+		List<CategoryVo> categoryList = blogService.getCategoryList(userVo.getNo());
+		
+		System.out.println("categoryList : " + categoryList);
+		return JSONResult.success(categoryList);
+	}
+	
+//	@ResponseBody
+//	@RequestMapping(value = "/admin/category", method = RequestMethod.POST)
+//	public JSONResult adminCategory(@AuthUser UserVo userVo) 
+//	{
+//		//BlogVo blogVo = blogService.getBlogTitleLogo(userVo.getNo());
+//		List<CategoryVo> categoryList = blogService.getCategoryList(userVo.getNo());
+//		
+//		//System.out.println("blogVo : " + blogVo);
+//		//model.addAttribute("blogVo", blogVo);
+//		//model.addAttribute("categoryList", blogService.getCategoryList(userVo.getNo()));
+//		
+//		//Map<String, Object> map = new HashMap<>();
+//		//map.put("blogVo", blogVo);
+//		//map.put("categoryList", categoryList);
+//		
+//		return JSONResult.success(categoryList);
+//	}
+	
+	@ResponseBody
 	@RequestMapping(value = "/admin/category", method = RequestMethod.POST)
-	public JSONResult adminCategory(@ModelAttribute @Valid CategoryVo categoryVo,
+	public JSONResult adminCategoryAdd(@ModelAttribute @Valid CategoryVo categoryVo,
 								 @AuthUser UserVo userVo,
 								 BindingResult result,
 								 Model model)
@@ -202,5 +227,14 @@ public class BlogController
 		
 		categoryVo.setNo(results);
 		return JSONResult.success(categoryVo);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/admin/category/delete/{no}", method = RequestMethod.GET)
+	public JSONResult adminCategoryDelete(@ModelAttribute CategoryVo categoryVo,
+										  @AuthUser UserVo userVo)
+	{		
+		blogService.categoryDelete(userVo.getNo(), categoryVo.getNo());
+		return JSONResult.success(categoryVo.getNo());
 	}
 }

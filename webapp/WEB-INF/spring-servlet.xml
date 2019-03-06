@@ -73,7 +73,7 @@
 	<mvc:default-servlet-handler />
 
 	<!-- the mvc resources mapping url(virtual) -->
-	<mvc:resources mapping="/assets/images/**" location="file:/duzon/jblog/" />
+	<mvc:resources mapping="/uploads/images/**" location="file:/duzon/jblog/" />
 	
 	
 	<!-- 멀티파트 리졸버 -->

@@ -32,8 +32,9 @@
 							<form:errors path="postTitle"/>
 						
 							<select name="category">
-									<option value="미분류">미분류</option>
-									<option value="자바">자바</option>
+									<c:forEach items="${categoryList }" var="vo">
+										<option value="${vo.name }">${vo.name }</option>
+									</c:forEach>
 							</select>
 						</td>
 					</tr>

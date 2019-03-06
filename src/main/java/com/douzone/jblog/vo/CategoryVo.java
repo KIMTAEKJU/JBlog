@@ -12,7 +12,7 @@ public class CategoryVo
 	@NotEmpty
 	private String description;
 
-	private Long postCount;
+	private long postCount;
 	
 	
 	

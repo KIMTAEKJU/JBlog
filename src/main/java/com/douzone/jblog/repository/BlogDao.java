@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.douzone.jblog.vo.BlogVo;
 import com.douzone.jblog.vo.CategoryVo;
 import com.douzone.jblog.vo.PostVo;
+import com.douzone.jblog.vo.UserVo;
 
 @Repository
 public class BlogDao 
@@ -53,4 +54,20 @@ public class BlogDao
 	{
 		return sqlSession.selectList("blog.getCategoryList", userNo);
 	}
+	
+	public PostVo getMainPost(long pathNo2)
+	{
+		return sqlSession.selectOne("blog.getMainPost", pathNo2);
+	}
+	
+	public UserVo getUserNo(String id)
+	{
+		return sqlSession.selectOne("blog.getUserNo", id);
+	}
+	
+	public void categoryDelete(Map<String, Object> map)
+	{
+		sqlSession.delete("blog.categoryDelete", map);
+	}
+	
 }

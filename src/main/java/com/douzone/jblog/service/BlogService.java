@@ -12,6 +12,7 @@ import com.douzone.jblog.repository.BlogDao;
 import com.douzone.jblog.vo.BlogVo;
 import com.douzone.jblog.vo.CategoryVo;
 import com.douzone.jblog.vo.PostVo;
+import com.douzone.jblog.vo.UserVo;
 
 @Service
 public class BlogService 
@@ -33,11 +34,12 @@ public class BlogService
 		return blogDao.updateAdminBasicInfo(map);
 	}
 	
-	public int postWrite(String categoryName, BlogVo blogVo)
+	public int postWrite(String categoryName, BlogVo blogVo, long userNo)
 	{
 		Map<String, Object> map = new HashMap<>();
 		map.put("blogVo", blogVo);
 		map.put("categoryName", categoryName);
+		map.put("userNo", userNo);
 				
 		return blogDao.postWrite(map);
 	}
@@ -64,6 +66,25 @@ public class BlogService
 	public List<CategoryVo> getCategoryList(long userNo)
 	{
 		return blogDao.getCategoryList(userNo);
+	}
+	
+	public PostVo getMainPost(long pathNo2)
+	{
+		return blogDao.getMainPost(pathNo2);
+	}
+	
+	public UserVo getUserNo(String id)
+	{
+		return blogDao.getUserNo(id);
+	}
+	
+	public void categoryDelete(long userNo, long categoryNo)
+	{
+		Map<String, Object> map = new HashMap<>();
+		map.put("categoryNo", categoryNo);
+		map.put("userNo", userNo);
+		
+		blogDao.categoryDelete(map);
 	}
 
 }

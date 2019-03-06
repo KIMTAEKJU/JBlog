@@ -1,10 +1,17 @@
 package com.douzone.jblog.vo;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 public class PostVo 
 {
 	private Long no;
+	
+	@NotEmpty
 	private String title;
+	
+	@NotEmpty
 	private String contents;
+	
 	private String regDate;
 	private Long categoryNo;
 	

@@ -15,67 +15,100 @@
 
 <script type="text/javascript">
 	var render = function(vo, mode) {
-		// 현업에 가면 이렇게안한다 -> template
-		// ex) ejs, underscore, mustache
-	
-		var htmls = 
-			"<tr>" + 
-				"<td>" + vo.no + "</td>" + 
-				"<td>" + vo.name + "</td>" +
-				"<td>" + 0 + "</td>" +
-				"<td>" + vo.description + "</td>" +
-				"<td>" + "<img src='${pageContext.request.contextPath}/assets/images/deletes.jpg'>" + "</td>" + 
-			"</tr>";
-		/*var htmls =*/ 
 		
-		$("#admin-cat").append(htmls);	
+		var htmls = 
+				"<tr>" + 
+					"<td>" + vo.no + "</td>" + 
+					"<td>" + vo.name + "</td>" +
+					"<td>" + vo.postCount + "</td>" +
+					"<td>" + vo.description + "</td>" +
+					"<td>" +  
+						  "<img src ='${pageContext.request.contextPath}/assets/images/delete.jpg' data-no='"+ vo.no + "'>" + 
+					"</td>" + 
+				"</tr>";
+			
+				$("#admin-cat").append(htmls);
 		
 	};
-		$(function(){
+	
+	var submitClick = function () {
+		var name = $("#name").val();
+		var desc = $("#desc").val();
+		
+		console.log("클릭");
+		console.log(name);
+		console.log(desc);
+		
+		$.ajax({
+			url: "/jblog/" + ${authuser.id} + "/admin/category",
+			type: "POST",
+			dataType: "json",
+			data: "&name=" + name +
+				  "&description=" + desc,
 			
-			$.ajax({
-				url: "/jblog/" + ${authuser.id} + "/admin/category",
-				type: "POST",
-				dataType: "json",
-				data: "&name=" + name +
-					  "&description=" + desc,
+			success: function(response){
+				console.log(response);
+				render(response.data, false);
 				
-				success: function(response){
-					console.log(response);
-					render(response.data, true);
-					
-				},
-				error: function(xhr, status, e) {
-					console.error("error : " + e);
-				}
-			});
+			},
+			error: function(xhr, status, e) {
+				console.error("error : " + e);
+			}
+		})
+	};
+	
+	var init = function () 
+	{
+		console.log("init 실행");
+		$.ajax({
+			url: "/jblog/" + ${authuser.id} + "/admin/category/ajax",
+			type: "GET",
+			dataType: "json",
+			data: "",
 			
-			$("#submit").click( function () {
-				var name = $("#name").val();
-				var desc = $("#desc").val();
+			success: function(response){
+				console.log(response);
 				
-				console.log("클릭");
-				console.log(name);
-				console.log(desc);
+				$.each( response.data, function(index, vo) {
+					//console.log(vo);
+					render(vo, false);
+				});
 				
-				$.ajax({
-					url: "/jblog/" + ${authuser.id} + "/admin/category",
-					type: "POST",
-					dataType: "json",
-					data: "&name=" + name +
-						  "&description=" + desc,
-					
-					success: function(response){
-						console.log(response);
-						render(response.data, true);
-						
-					},
-					error: function(xhr, status, e) {
-						console.error("error : " + e);
-					}
-				})
-			});
+			},
+			error: function(xhr, status, e) {
+				console.error("error : " + e);
+			}
 		});
+	};
+	
+	var categoryDelete = function(event){
+		
+		console.log("clicked!!" + $(this).data("no"));
+		
+		$.ajax({
+			url: "/jblog/" + ${authuser.id} + "/admin/category/delete/" + $(this).data("no"),
+			type: "GET",
+			dataType: "json",
+			data: "",
+			
+			success: function(response){
+				// 리턴값으로 카테고리번호를 받아와서 그것을 없애준다
+				$("#admin-cat tr td img[data-no='" + response.data +"']").parent().parent().remove();
+				
+			},
+			error: function(xhr, status, e) {
+				console.error("error : " + e);
+			}
+		});
+	};
+	
+	$(function(){
+			
+		init(); // 처음 실행되서 로그인한 유저의 카테고리 리스트를 뿌려준다
+		$("#submit").click( submitClick); // 카테고리 추가
+		$(document).on("click", "#admin-cat tr td img", categoryDelete); // 카테고리 제거
+	});
+		
 	</script>
 </head>
 <body>
@@ -94,17 +127,6 @@
 					<th>설명</th>
 					<th>삭제</th>
 				</tr>
-				<c:forEach items="${categoryList }" var="vo" varStatus="status">
-					<tr>
-						<td>${vo.no }</td>
-						<td>${vo.name }</td>
-						<td>${vo.postCount }</td>
-						<td>${vo.description }</td>
-						<td><img
-							src="${pageContext.request.contextPath}/assets/images/delete.jpg"></td>
-					</tr>
-				</c:forEach>
-
 			</table>
 
 			<h4 class="n-c">새로운 카테고리 추가</h4>

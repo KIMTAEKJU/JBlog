@@ -46,7 +46,7 @@ a:hover 		{ color:#dc143c; text-decoration:none; font-weight:bold; }
 
 
 
-div#container				{ width:920px; margin:0 auto }
+div#container				{ width:1100px; margin:0 auto }
 div#header					{ height:120px; background: #5394CC;  }
 div#content					{ float:left; width:720px; min-height:220px }
 div#content.full-screen		{ float:none; width:920px;}
@@ -69,12 +69,12 @@ div#container		{ text-align:left }
 
 
 /* content */
-div#content	.blog-content	{ padding:10px }
+div#content	.blog-content	{ padding:10px; margin:50px 50px 50px 50px;}
 .blog-content h4			{ font-size:1.3em; color:#9D96D0 }
 .blog-content p				{ margin-top:10px; line-height:150% }
-div#content .blog-list		{ margin:20px 0 10px 10px }
+div#content .blog-list		{ margin:100px 50px 100px 50px; border: 1px solid red; padding:20px;}
 .blog-list 					{ width:100% }
-.blog-list li				{ height:20px; clear:both; }
+.blog-list li				{ height:20px; clear:both; padding: 1px;}
 .blog-list li a				{ display:block; float:left }
 .blog-list li span			{ display:block; float:right; margin-right:30px }
 
@@ -106,7 +106,7 @@ div#content .admin-cat					{ border:none; width:720px; margin-top:30px }
 .admin-cat-write td.s					{ padding:10px 0; text-align:center }
 
 /* navigator */
-div#navigation							{ background-color:#F9F9F9 }
+div#navigation							{ background-color:#F9F9F9;}
 div#navigation h2, div#navigation ul	{ margin-left:10px }
 div#navigation h2						{ font-size:1.0em }
 div#navigation ul						{ margin-top:5px; margin-bottom:10px }

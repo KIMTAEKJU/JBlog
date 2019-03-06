@@ -30,11 +30,12 @@ public class AuthUserHandlerMethodArgumentResolver implements HandlerMethodArgum
 		
 		HttpSession session = request.getSession();
 		
+
 		if( session == null)
 		{
 			return null;
 		}
-		
+
 		return session.getAttribute("authuser");
 	}
 	
