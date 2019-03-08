@@ -37,7 +37,19 @@
 	<select id="getCategoryName" parameterType="long"
 		resultType="categoryvo">
 		<![CDATA[
-			select no, name from category where user_no = #{value}
+			select no, name from category where user_no = #{value};		
+		]]>
+	</select>
+	
+	<select id="getPostCount" parameterType="long" resultType="categoryvo">
+		<![CDATA[
+			select (select count(*) from post a where a.category_no = b.no) as postCount from category b where user_no = #{value}
+		]]>
+	</select>
+	
+	<select id="getAllPostLook" parameterType="long" resultType="categoryvo">
+		<![CDATA[
+			select no, name, (select count(*) from post a, category b where a.CATEGORY_NO = b.no and b.user_no = #{value}) as postCount from category a where a.name = '전체글보기' and a.user_no = #{value}
 		]]>
 	</select>
 

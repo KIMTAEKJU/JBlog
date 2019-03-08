@@ -17,9 +17,9 @@ public class UserService
 		return userDao.idCheck(id);
 	}
 	
-	public void join(UserVo userVo, String logo)
+	public void join(UserVo userVo)
 	{
-		userDao.join(userVo, logo);
+		userDao.join(userVo);
 	}
 	
 	public UserVo login(UserVo userVo)

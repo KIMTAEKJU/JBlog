@@ -38,6 +38,16 @@ public class BlogDao
 		return sqlSession.selectList("blog.getCategoryName", userNo);
 	}
 	
+	public CategoryVo getAllPostLook(long userNo)
+	{
+		return sqlSession.selectOne("blog.getAllPostLook", userNo);
+	}
+	
+	public List<CategoryVo> getPostCount(long userNo)
+	{
+		return sqlSession.selectList("blog.getPostCount", userNo);
+	}
+	
 	public List<PostVo> getPostList(Map<String, Object> map)
 	{
 		List<PostVo> list = sqlSession.selectList("blog.getPostList", map);

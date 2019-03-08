@@ -58,7 +58,7 @@ public class UserController
 			return "/user/join";
 		}
 		
-		userService.join(userVo, "/assets/images/logo.jpg");
+		userService.join(userVo);
 		return "redirect:/user/joinsuccess";
 	}
 	

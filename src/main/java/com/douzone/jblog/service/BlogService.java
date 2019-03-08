@@ -49,6 +49,15 @@ public class BlogService
 		return blogDao.getCategoryName(userNo);
 	}
 	
+	public CategoryVo getAllPostLook(long userNo)
+	{
+		return blogDao.getAllPostLook(userNo);
+	}
+	public List<CategoryVo> getPostCount(long userNo)
+	{
+		return blogDao.getPostCount(userNo);
+	}
+	
 	public List<PostVo> getPostList(long categoryNo, long postNo, long userNo)
 	{
 		Map<String, Object> map = new HashMap<>();
@@ -57,26 +66,25 @@ public class BlogService
 		
 		Long maxPostNo = blogDao.getMaxPostNo(map);
 		
-		if( maxPostNo == null)
+		if( maxPostNo == null) // 카테고리에 아무것도없으면
 		{
 			return null;
 		}	
 		
-		long firstQueryValue = 4;
-		long secondQueryValue = 4;
-		
 		List<PostVo> list = null;
 		int showPostCount = 3;
+		long firstQueryValue = showPostCount;
+		long secondQueryValue = showPostCount;
 		
 		if( postNo == -1) // 카테고리만 눌러서 왔을때
 		{
 			firstQueryValue = 0;
 			secondQueryValue = ( showPostCount * 2 );
 			
-			if( showPostCount % 2 == 1)
-			{
-				secondQueryValue++;
-			}
+//			if( showPostCount % 2 == 1)
+//			{
+//				secondQueryValue++;
+//			}
 			
 			System.out.println("--------------------");
 			System.out.println("포스트번호가 없을때");
@@ -104,6 +112,9 @@ public class BlogService
 			
 			int firstGetPostListSize = blogDao.getPostList(map).size();
 			int secondGetPostListSize = blogDao.getPostListSecond(map).size();
+			
+			System.out.println("firstGetPostListSize : " + firstGetPostListSize);
+			System.out.println("secondGetPostListSize : " + secondGetPostListSize);
 			
 			if( firstGetPostListSize < showPostCount) // 글번호와 최대글번호의 차이가 4가 안될때 
 			{

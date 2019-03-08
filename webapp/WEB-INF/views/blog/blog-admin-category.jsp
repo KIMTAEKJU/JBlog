@@ -40,7 +40,7 @@
 		console.log(desc);
 		
 		$.ajax({
-			url: "/jblog/" + ${authuser.id} + "/admin/category",
+			url: "/jblog/${authuser.id}/admin/category",
 			type: "POST",
 			dataType: "json",
 			data: "&name=" + name +
@@ -61,7 +61,7 @@
 	{
 		console.log("init 실행");
 		$.ajax({
-			url: "/jblog/" + ${authuser.id} + "/admin/category/ajax",
+			url: "/jblog/${authuser.id}/admin/category/ajax",
 			type: "GET",
 			dataType: "json",
 			data: "",
@@ -86,7 +86,7 @@
 		console.log("clicked!!" + $(this).data("no"));
 		
 		$.ajax({
-			url: "/jblog/" + ${authuser.id} + "/admin/category/delete/" + $(this).data("no"),
+			url: "/jblog/${authuser.id}/admin/category/delete/" + $(this).data("no"),
 			type: "GET",
 			dataType: "json",
 			data: "",

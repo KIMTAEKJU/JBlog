@@ -57,10 +57,31 @@
 		<div id="navigation">
 			<h2>카테고리</h2> <!-- 카테고리 리스트 -->
 			<ul>
+				<li>
+					<a href="${pageContext.request.contextPath}/${visitant.id}/${allPostLook.no}">${allPostLook.name }</a>
+					<span>(${allPostLook.postCount})</span>
+				</li>
+				
 				<c:forEach items="${categoryNameList }" var="vo" varStatus="status">
-					<li>
-						<a href="${pageContext.request.contextPath}/${visitant.id}/${vo.no}">${vo.name }</a>
-					</li>
+				
+					<c:if test="${status.index > 0 }">
+					
+						<li>
+							<a href="${pageContext.request.contextPath}/${visitant.id}/${vo.no}">${vo.name }</a>
+						
+							<c:forEach items="${postCountList}" var="vo" varStatus="postStatus">
+							
+									<span>
+										<c:if test="${status.index == postStatus.index }">
+											(${vo.postCount })
+										</c:if>
+									</span>
+									
+							</c:forEach>
+						</li>
+						
+					</c:if>
+					
 				</c:forEach>
 			</ul>
 		</div>

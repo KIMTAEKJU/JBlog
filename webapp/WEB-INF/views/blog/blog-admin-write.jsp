@@ -32,8 +32,10 @@
 							<form:errors path="postTitle"/>
 						
 							<select name="category">
-									<c:forEach items="${categoryList }" var="vo">
-										<option value="${vo.name }">${vo.name }</option>
+									<c:forEach items="${categoryList }" var="vo" varStatus="status">
+										<c:if test="${status.index > 0 }">
+											<option value="${vo.name }">${vo.name }</option>							
+										</c:if>
 									</c:forEach>
 							</select>
 						</td>

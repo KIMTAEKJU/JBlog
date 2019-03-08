@@ -21,6 +21,7 @@
 		<![CDATA[
 			select no, id from user where id=#{id} and password=#{password} 
 		]]>
+		
 	</select>
 
 	<select id="idCheck" parameterType="string" resultType="string">
@@ -29,10 +30,11 @@
 		]]>
 	</select>
 
-	<insert id="makeBlog" parameterType="map">
+	<insert id="makeBlog" parameterType="uservo">
 		<![CDATA[
-			insert into blog values(#{userNo}, #{title}, #{logo})
+			insert into blog values(#{no}, #{id}, '/assets/images/logo.jpg')
 		]]>
+		
 	</insert>
 
 	<select id="getId" parameterType="long" resultType="string">
@@ -41,9 +43,16 @@
 		]]>
 	</select>
 
-	<insert id="makeDefaultCategory" parameterType="map">
+	<insert id="makeDefaultCategory" parameterType="long">
 		<![CDATA[
-			insert into category values(null, #{defaultCategoryName}, #{defaultCategoryDescription}, now(), #{userNo})
+			insert into category values(null, '미분류', '기본 카테고리입니다.', now(), #{value})
+		]]>
+		
+	</insert>
+	
+	<insert id="makeallPostLook" parameterType="long">
+		<![CDATA[
+			insert into category values(null, '전체글보기', '전체글보기', now(), #{value})
 		]]>
 	</insert>
 </mapper> 

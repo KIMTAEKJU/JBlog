@@ -1,5 +1,6 @@
 package com.douzone.jblog.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,37 +54,63 @@ public class BlogController
 		visitantUserVo.setId(id);
 		
 		List<CategoryVo> categoryList = blogService.getCategoryName(visitantUserVo.getNo());
-
+		CategoryVo allPostLook = blogService.getAllPostLook(visitantUserVo.getNo());
+		List<CategoryVo> postCountList = blogService.getPostCount(visitantUserVo.getNo());
+		
 		model.addAttribute("blogVo", blogService.getBlogTitleLogo(visitantUserVo.getNo()));
 		model.addAttribute("categoryNameList", categoryList);
+		model.addAttribute("allPostLook", allPostLook);
+		model.addAttribute("postCountList", postCountList);
+		model.addAttribute("visitant", visitantUserVo);
+
 		
 		if( pathNo1.isPresent()) // 카테고리를 눌러서 온거라면
 		{	
-			if( pathNo2.isPresent())
+			if( categoryList.get(0).getNo() == pathNo1.get()) // 전체글보기를 눌렀으면
 			{
-				postList = blogService.getPostList(pathNo1.get(), pathNo2.get(), visitantUserVo.getNo());
-				model.addAttribute("mainPost", blogService.getMainPost(pathNo2.get()));
-			}
-			else
-			{
-				postList = blogService.getPostList(pathNo1.get(), -1, visitantUserVo.getNo());
-				if( postList != null)
+				int len = categoryList.size();
+				postList = new ArrayList<>();
+				
+				for( int i = 1; i < len; i++)
 				{
-					model.addAttribute("mainPost", postList.get(0) ); // 아니면 미분류 내용
+					postList.addAll(blogService.getPostList(categoryList.get(i).getNo(), -1, visitantUserVo.getNo()));
+				}
+				
+				model.addAttribute("mainPost", postList.get(0));
+
+			}
+			else // 전체 글보기를 안눌렀으면
+			{
+			
+				if( pathNo2.isPresent())
+				{
+					postList = blogService.getPostList(pathNo1.get(), pathNo2.get(), visitantUserVo.getNo());
+					model.addAttribute("mainPost", blogService.getMainPost(pathNo2.get()));
+				}
+				else
+				{
+					postList = blogService.getPostList(pathNo1.get(), -1, visitantUserVo.getNo());
+					if( postList != null)
+					{
+						model.addAttribute("mainPost", postList.get(0) ); // 아니면 미분류 내용
+					}
 				}
 			}
 		}
 		else
 		{
-			postList = blogService.getPostList(1, -1, visitantUserVo.getNo());
-			if( postList != null)
+			int len = categoryList.size();
+			postList = new ArrayList<>();
+			
+			for( int i = 1; i < len; i++)
 			{
-				model.addAttribute("mainPost", postList.get(0) ); // 아니면 미분류 내용
+				postList.addAll(blogService.getPostList(categoryList.get(i).getNo(), -1, visitantUserVo.getNo()));
 			}
+			
+			model.addAttribute("mainPost", postList.get(0));
 		}
 		
 		model.addAttribute("postList", postList);
-		model.addAttribute("visitant", visitantUserVo);
 		return "/blog/blog-main";
 	}
 
@@ -188,7 +215,7 @@ public class BlogController
 	{
 		System.out.println("여기오나요?");
 		List<CategoryVo> categoryList = blogService.getCategoryList(userVo.getNo());
-		
+		categoryList.remove(0);
 		System.out.println("categoryList : " + categoryList);
 		return JSONResult.success(categoryList);
 	}
